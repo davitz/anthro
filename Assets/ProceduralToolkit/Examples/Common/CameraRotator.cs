@@ -79,15 +79,19 @@ namespace ProceduralToolkit.Examples
             }
 
             cameraTransform.position = CalculateCameraPosition();
+
+            float axisX = Input.GetAxis("Controller Right Joystick X");
+            float axisY = Input.GetAxis("Controller Right Joystick Y");
+
+            if (axisX != 0 || axisY != 0)
+            {
+                RotateCameraWithController(axisX, axisY);
+            }
         }
 
         public void OnDrag(PointerEventData eventData)
-        {
-            Debug.Log("stage 1 drag");
-
+        { 
             if (cameraTransform == null || target == null) return;
-
-            Debug.Log("stage 2 drag");
 
             lookAngle += eventData.delta.x*rotationSensitivity;
             tiltAngle -= eventData.delta.y*rotationSensitivity;
@@ -98,6 +102,16 @@ namespace ProceduralToolkit.Examples
         private Vector3 CalculateCameraPosition()
         {
             return target.position + cameraTransform.rotation*(Vector3.back*distance) + Vector3.up*yOffset;
+        }
+
+        private void RotateCameraWithController(float axisX, float axisY)
+        {
+            if (cameraTransform == null || target == null) return;
+
+            lookAngle += axisX * rotationSensitivity;
+            tiltAngle -= axisY * rotationSensitivity;
+            tiltAngle = Mathf.Clamp(tiltAngle, tiltMin, tiltMax);
+            rotation = Quaternion.Euler(tiltAngle, lookAngle, 0);
         }
     }
 }
