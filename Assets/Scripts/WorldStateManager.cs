@@ -18,6 +18,7 @@ namespace HammerFingers.Anthro
                 WorldStateChanged();
             }
         }
+
         [Header("Main World Lighting (Directional Light)")]
         public GameObject MainLight; // world lighting
         private Light worldLight; // MainLight's "Light" component
@@ -25,6 +26,7 @@ namespace HammerFingers.Anthro
         [Header("Health Bar")]
         public Texture Healthbar;
         public Texture HealthbarNeedle;
+        public bool isHealthbarVisible;
 
         [Header("Point Range (e.g. 100 means -100 to 100)")]
         public int MaxPointsRange = 100; // points can't go past 100 or -100
@@ -60,8 +62,11 @@ namespace HammerFingers.Anthro
 
         void OnGUI()
         {
-            GUI.DrawTexture(new Rect((Screen.width / 2) - (Healthbar.width /2), 5, Healthbar.width, Healthbar.height), Healthbar);
-            DrawNeedleOnBar();
+            if (isHealthbarVisible == true)
+            {
+                GUI.DrawTexture(new Rect((Screen.width / 2) - (Healthbar.width / 2), 5, Healthbar.width, Healthbar.height), Healthbar);
+                DrawNeedleOnBar();
+            }
         }
 
         private void DrawNeedleOnBar()
