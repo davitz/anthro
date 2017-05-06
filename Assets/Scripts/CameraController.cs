@@ -5,10 +5,6 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
 
-
-    [Header("Main Camera Object")]
-    public Camera MainCamera;
-
     [Header("Zoom Properties (Levels: 0 is close, 15 is far)")]
     public float ZoomSpeed = 10.0f;
     public float MinimumZoomLevel = 0f;
@@ -30,7 +26,7 @@ public class CameraController : MonoBehaviour
             // if level is above minimum and under maximum
             if (ZoomLevel >= MinimumZoomLevel && ZoomLevel < MaximumZoomLevel)
             {
-                MainCamera.transform.Translate((-MainCamera.transform.forward * -axis) * ZoomSpeed, Space.World);
+                this.transform.Translate((-this.transform.forward * -axis) * ZoomSpeed, Space.World);
                 ZoomLevel += (-axis);
             }
         }
@@ -38,7 +34,7 @@ public class CameraController : MonoBehaviour
         {
             if (ZoomLevel > MinimumZoomLevel && ZoomLevel <= MaximumZoomLevel)
             {
-                MainCamera.transform.Translate((-MainCamera.transform.forward * -axis) * ZoomSpeed, Space.World);
+                this.transform.Translate((-this.transform.forward * -axis) * ZoomSpeed, Space.World);
                 ZoomLevel += (-axis);
             }
         }
