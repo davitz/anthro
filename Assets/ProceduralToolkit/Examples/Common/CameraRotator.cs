@@ -54,11 +54,24 @@ namespace ProceduralToolkit.Examples
             }
 
             float scroll = Input.GetAxis("Mouse ScrollWheel");
+            bool rightBumper = Input.GetKey("joystick button 5");
+            bool leftBumper = Input.GetKey("joystick button 4");
+
+            if (rightBumper)
+            {
+                scroll = -0.1f;
+            }
+            else if (leftBumper)
+            {
+                scroll = 0.1f;
+            }
+
             if (scroll != 0)
             {
                 scrollDistance -= scroll*Time.deltaTime*scrollSensitivity;
                 scrollDistance = Mathf.Clamp(scrollDistance, distanceMin, distanceMax);
             }
+            
 
             if (distance != scrollDistance)
             {
@@ -70,7 +83,11 @@ namespace ProceduralToolkit.Examples
 
         public void OnDrag(PointerEventData eventData)
         {
+            Debug.Log("stage 1 drag");
+
             if (cameraTransform == null || target == null) return;
+
+            Debug.Log("stage 2 drag");
 
             lookAngle += eventData.delta.x*rotationSensitivity;
             tiltAngle -= eventData.delta.y*rotationSensitivity;
