@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Random = UnityEngine.Random;
+using ProceduralToolkit;
 
-namespace ProceduralToolkit.Examples
+namespace HammerFingers.Anthro
 {
     /// <summary>
     /// A simple Perlin noise based low poly terrain generator
     /// </summary>
-    public static class LowPolyTerrainGenerator
+    public static class AnthroLowPolyTerrainGenerator
     {
         [Serializable]
         public class Config
@@ -20,8 +21,11 @@ namespace ProceduralToolkit.Examples
             public Gradient gradient;
         }
 
-        public static MeshDraft TerrainDraft(Config config, float xOffset = 0f, float zOffset = 0f)
+        public static MeshDraft TerrainDraft(Config config,  Mesh northNeighbor = null, Mesh southNeighbor = null, Mesh westNeighbor = null, Mesh eastNeighbor = null)
         {
+
+            float xOffset = 0f; float zOffset = 0f;
+
             Assert.IsTrue(config.terrainSize.x > 0);
             Assert.IsTrue(config.terrainSize.z > 0);
             Assert.IsTrue(config.cellSize > 0);
@@ -55,22 +59,78 @@ namespace ProceduralToolkit.Examples
             {
                 for (int z = 0; z < zSegments; z++)
                 {
-                    int index0 = 6*(x + z*xSegments);
+
+                    int index0 = 6 * (x + z * xSegments);
                     int index1 = index0 + 1;
                     int index2 = index0 + 2;
                     int index3 = index0 + 3;
                     int index4 = index0 + 4;
                     int index5 = index0 + 5;
 
+
                     float height00 = GetHeight(x + 0, z + 0, xSegments, zSegments, noiseOffset, config.noiseScale);
                     float height01 = GetHeight(x + 0, z + 1, xSegments, zSegments, noiseOffset, config.noiseScale);
                     float height10 = GetHeight(x + 1, z + 0, xSegments, zSegments, noiseOffset, config.noiseScale);
                     float height11 = GetHeight(x + 1, z + 1, xSegments, zSegments, noiseOffset, config.noiseScale);
 
-                    var vertex00 = new Vector3((x + 0)*xStep + xOffset, height00*config.terrainSize.y, (z + 0)*zStep + zOffset);
-                    var vertex01 = new Vector3((x + 0)* xStep + xOffset, height01*config.terrainSize.y, (z + 1)*zStep + zOffset);
-                    var vertex10 = new Vector3((x + 1)* xStep + xOffset, height10*config.terrainSize.y, (z + 0)*zStep + zOffset);
-                    var vertex11 = new Vector3((x + 1)* xStep + xOffset, height11*config.terrainSize.y, (z + 1)*zStep + zOffset);
+                    var vertex00 = new Vector3((x + 0) * xStep + xOffset, height00 * config.terrainSize.y, (z + 0) * zStep + zOffset);
+                    var vertex01 = new Vector3((x + 0) * xStep + xOffset, height01 * config.terrainSize.y, (z + 1) * zStep + zOffset);
+                    var vertex10 = new Vector3((x + 1) * xStep + xOffset, height10 * config.terrainSize.y, (z + 0) * zStep + zOffset);
+                    var vertex11 = new Vector3((x + 1) * xStep + xOffset, height11 * config.terrainSize.y, (z + 1) * zStep + zOffset);
+
+
+                    if (z == zSegments - 1 && northNeighbor != null)
+                    {
+
+                        Vector3 nVertex00 = northNeighbor.vertices[6 * (x + 0 * xSegments) + 0];
+                        Vector3 nVertex10 = northNeighbor.vertices[6 * (x + 0 * xSegments) + 5];
+
+
+                        vertex11.y = nVertex10.y;
+                        vertex01.y = nVertex00.y;
+                        
+                        height11 = vertex11.y / config.terrainSize.y;
+                        height01 = vertex01.y / config.terrainSize.y;
+
+                    }
+                    if (z == 0 && southNeighbor != null)
+                    {
+                        Vector3 nVertex01 = southNeighbor.vertices[6 * (x + (zSegments - 1) * xSegments) + 1];
+                        Vector3 nVertex11 = southNeighbor.vertices[6 * (x + (zSegments - 1) * xSegments) + 2];
+
+
+                        vertex10.y = nVertex11.y;
+                        vertex00.y = nVertex01.y;
+
+                        height10 = vertex10.y / config.terrainSize.y;
+                        height00 = vertex00.y / config.terrainSize.y;
+                    }
+                    if (x == 0 && westNeighbor != null)
+                    {
+                        Vector3 nVertex10 = westNeighbor.vertices[6 * (xSegments - 1 + z * xSegments) + 5];
+                        Vector3 nVertex11 = westNeighbor.vertices[6 * (xSegments - 1 + z * xSegments) + 2];
+
+
+                        vertex00.y = nVertex10.y;
+                        vertex01.y = nVertex11.y;
+
+                        height01 = vertex01.y / config.terrainSize.y;
+                        height00 = vertex00.y / config.terrainSize.y;
+                    }
+                    if (x == xSegments-1 && eastNeighbor != null)
+                    {
+                        Vector3 nVertex00 = eastNeighbor.vertices[6 * (0 + z * xSegments) + 0];
+                        Vector3 nVertex01 = eastNeighbor.vertices[6 * (0 + z * xSegments) + 1];
+
+
+                        vertex10.y = nVertex00.y;
+                        vertex11.y = nVertex01.y;
+
+                        height10 = vertex10.y / config.terrainSize.y;
+                        height11 = vertex11.y / config.terrainSize.y;
+                    }
+
+
 
                     draft.vertices[index0] = vertex00;
                     draft.vertices[index1] = vertex01;

@@ -7,7 +7,7 @@ namespace ProceduralToolkit.Examples
     {
         public MeshFilter terrainMeshFilter;
         public RectTransform leftPanel;
-        public bool constantSeed = false;
+        public bool constantSeed = true;
         public LowPolyTerrainGenerator.Config config = new LowPolyTerrainGenerator.Config();
 
         private const int minXSize = 10;
@@ -22,6 +22,8 @@ namespace ProceduralToolkit.Examples
         private const int maxNoiseScale = 20;
 
         private Mesh terrainMesh;
+
+        private MeshDraft draft;
 
         private void Awake()
         {
@@ -85,7 +87,9 @@ namespace ProceduralToolkit.Examples
                 config.gradient = ColorE.Gradient(from: GetMainColorHSV(), to: GetSecondaryColorHSV());
             }
 
-            var draft = LowPolyTerrainGenerator.TerrainDraft(config);
+            
+            draft = LowPolyTerrainGenerator.TerrainDraft(config);
+            
             draft.Move(Vector3.left*config.terrainSize.x/2 + Vector3.back*config.terrainSize.z/2);
             AssignDraftToMeshFilter(draft, terrainMeshFilter, ref terrainMesh);
         }
