@@ -32,7 +32,7 @@ namespace HammerFingers.Anthro
 
             terrainConfig.gradient = new Gradient();
             terrainConfig.gradient.SetKeys(new[] { new GradientColorKey(new Color(0, 0, 0), 0), new GradientColorKey(new Color(0, 0.5f, 0), 1) }, new[] { new GradientAlphaKey(1, 0), new GradientAlphaKey(1, 1) });
-            terrainConfig.noiseScale = 3f;
+            terrainConfig.noiseScale = 2.75f;
             terrainConfig.cellSize = 2f;
             terrainConfig.terrainSize.y = 2;
         }
@@ -156,7 +156,7 @@ namespace HammerFingers.Anthro
             if(selectedQuad[i][j] == null)
             {
                 selectedQuad[i][j] = (GameObject)UnityEngine.Object.Instantiate(Resources.Load("AnthroTile"));
-                //selectedQuad[i][j].AddComponent<MeshFilter>();
+      
                 generateTerrain(selectedQuad[i][j], GetTile(x, z + 1), GetTile(x, z - 1), GetTile(x - 1, z), GetTile(x + 1, z));
 
                 Vector3 newPos = new Vector3(x * tileSize, selectedQuad[i][j].transform.position.y, z * tileSize);
@@ -195,6 +195,9 @@ namespace HammerFingers.Anthro
             var meshFilter = terrain.GetComponent<MeshFilter>();
             meshFilter.mesh = mesh;
             meshFilter.sharedMesh = mesh;
+
+            var meshCollider = terrain.GetComponent<MeshCollider>();
+            meshCollider.sharedMesh = mesh;
         }
 
     }
