@@ -159,7 +159,6 @@ namespace HammerFingers.Anthro
                 //selectedQuad[i][j].AddComponent<MeshFilter>();
                 generateTerrain(selectedQuad[i][j], GetTile(x, z + 1), GetTile(x, z - 1), GetTile(x - 1, z), GetTile(x + 1, z));
 
-                Debug.Log("x=" + x + " z=" + z + " tileSize=" + tileSize);
                 Vector3 newPos = new Vector3(x * tileSize, selectedQuad[i][j].transform.position.y, z * tileSize);
                 selectedQuad[i][j].transform.position = newPos;
 
