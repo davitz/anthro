@@ -16,9 +16,11 @@ namespace HammerFingers.Anthro
         public class Config
         {
             public Vector3 terrainSize = new Vector3(20, 1, 20);
-            public float cellSize = 1;
+            public float cellSize = 2f;
             public float noiseScale = 5;
             public Gradient gradient;
+
+            public float heightOffset = 0;
         }
 
         public static MeshDraft TerrainDraft(Config config,  Mesh northNeighbor = null, Mesh southNeighbor = null, Mesh westNeighbor = null, Mesh eastNeighbor = null)
@@ -68,10 +70,10 @@ namespace HammerFingers.Anthro
                     int index5 = index0 + 5;
 
 
-                    float height00 = GetHeight(x + 0, z + 0, xSegments, zSegments, noiseOffset, config.noiseScale);
-                    float height01 = GetHeight(x + 0, z + 1, xSegments, zSegments, noiseOffset, config.noiseScale);
-                    float height10 = GetHeight(x + 1, z + 0, xSegments, zSegments, noiseOffset, config.noiseScale);
-                    float height11 = GetHeight(x + 1, z + 1, xSegments, zSegments, noiseOffset, config.noiseScale);
+                    float height00 = GetHeight(x + 0, z + 0, xSegments, zSegments, noiseOffset, config.noiseScale) + config.heightOffset;
+                    float height01 = GetHeight(x + 0, z + 1, xSegments, zSegments, noiseOffset, config.noiseScale) + config.heightOffset;
+                    float height10 = GetHeight(x + 1, z + 0, xSegments, zSegments, noiseOffset, config.noiseScale) + config.heightOffset;
+                    float height11 = GetHeight(x + 1, z + 1, xSegments, zSegments, noiseOffset, config.noiseScale) + config.heightOffset;
 
                     var vertex00 = new Vector3((x + 0) * xStep + xOffset, height00 * config.terrainSize.y, (z + 0) * zStep + zOffset);
                     var vertex01 = new Vector3((x + 0) * xStep + xOffset, height01 * config.terrainSize.y, (z + 1) * zStep + zOffset);
@@ -91,6 +93,7 @@ namespace HammerFingers.Anthro
                         
                         height11 = vertex11.y / config.terrainSize.y;
                         height01 = vertex01.y / config.terrainSize.y;
+
 
                     }
                     if (z == 0 && southNeighbor != null)

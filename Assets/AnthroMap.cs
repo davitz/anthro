@@ -6,41 +6,91 @@ using ProceduralToolkit;
 namespace HammerFingers.Anthro
 {
 
+    public class AnthroTile
+    {
+        public Biome biome { get; set; }
+        public GameObject tileObject { get; set; }
+    }
+
+    public class Biome
+    {
+        public string name { get; set; }
+        public AnthroLowPolyTerrainGenerator.Config config { get; set; }
+        public int probability;
+    }
+
+
     public class AnthroMap
     {
         public int bufferTiles;
         public int tileSize;
 
-        List<List<GameObject>> NWQuad;
-        List<List<GameObject>> NEQuad;
-        List<List<GameObject>> SWQuad;
-        List<List<GameObject>> SEQuad;
+        List<List<AnthroTile>> NWQuad;
+        List<List<AnthroTile>> NEQuad;
+        List<List<AnthroTile>> SWQuad;
+        List<List<AnthroTile>> SEQuad;
+
+        Dictionary<string, Biome> biomes;
 
         AnthroLowPolyTerrainGenerator.Config terrainConfig = new AnthroLowPolyTerrainGenerator.Config();
 
 
-        public AnthroMap(int _bufferTiles = 5, int _tileSize = 20)
+        public AnthroMap(int _bufferTiles = 20, int _tileSize = 20)
         {
             bufferTiles = _bufferTiles;
             tileSize = _tileSize;
 
-            NWQuad = new List<List<GameObject>>();
-            NEQuad = new List<List<GameObject>>();
-            SWQuad = new List<List<GameObject>>();
-            SEQuad = new List<List<GameObject>>();
+            NWQuad = new List<List<AnthroTile>>();
+            NEQuad = new List<List<AnthroTile>>();
+            SWQuad = new List<List<AnthroTile>>();
+            SEQuad = new List<List<AnthroTile>>();
 
 
-            terrainConfig.gradient = new Gradient();
-            terrainConfig.gradient.SetKeys(new[] { new GradientColorKey(new Color(0, 0, 0), 0), new GradientColorKey(new Color(0, 0.5f, 0), 1) }, new[] { new GradientAlphaKey(1, 0), new GradientAlphaKey(1, 1) });
-            terrainConfig.noiseScale = 2.75f;
-            terrainConfig.cellSize = 2f;
-            terrainConfig.terrainSize.y = 2;
+            biomes = new Dictionary<string, Biome>();
+
+            var plainsConfig = new AnthroLowPolyTerrainGenerator.Config();
+            plainsConfig.gradient = new Gradient();
+            plainsConfig.gradient.SetKeys(new[] { new GradientColorKey(new Color(.3f, .2f, 0f), 0), new GradientColorKey(new Color(0.2f, 0.4f, 0), 1) }, new[] { new GradientAlphaKey(1, 0), new GradientAlphaKey(1, 1) });
+            plainsConfig.noiseScale = 2.75f;
+            plainsConfig.terrainSize.y = .75f;
+            var plains = new Biome();
+            plains.name = "plains";
+            plains.config = plainsConfig;
+            plains.probability = 10;
+            biomes.Add("plains", plains);
+
+            var hillsConfig = new AnthroLowPolyTerrainGenerator.Config();
+            hillsConfig.gradient = new Gradient();
+            hillsConfig.gradient.SetKeys(new[] { new GradientColorKey(new Color(.3f, .2f, 0f), 0), new GradientColorKey(new Color(0.1f, 0.6f, 0), 1) }, new[] { new GradientAlphaKey(1, 0), new GradientAlphaKey(1, 1) });
+            hillsConfig.noiseScale = 20f;
+            hillsConfig.terrainSize.y = 2f;
+            var hills = new Biome();
+            hills.name = "hills";
+            hills.config = hillsConfig;
+            hills.probability = 5;
+            biomes.Add("hills", hills);
+
+
+            var canyonsConfig = new AnthroLowPolyTerrainGenerator.Config();
+            canyonsConfig.gradient = new Gradient();
+            canyonsConfig.gradient.SetKeys(new[] { new GradientColorKey(new Color(.5f, .2f, 0f), 0), new GradientColorKey(new Color(.3f, .2f, 0f), 1) }, new[] { new GradientAlphaKey(1, 0), new GradientAlphaKey(1, 1) });
+            canyonsConfig.noiseScale = 50f;
+            canyonsConfig.terrainSize.y = 5f;
+            canyonsConfig.heightOffset = -1f;
+            var canyons = new Biome();
+            canyons.name = "canyons";
+            canyons.config = canyonsConfig;
+            canyons.probability = 1;
+            biomes.Add("canyons", canyons);
+
+
+
         }
 
 
-        public GameObject GetTile(int x, int z)
+        public AnthroTile GetTile(int x, int z)
         {
-            List<List<GameObject>> selectedQuad;
+            List<List<AnthroTile>> selectedQuad;
             int i = x;
             int j = z;
 
@@ -109,9 +159,9 @@ namespace HammerFingers.Anthro
         }
 
 
-        public GameObject AddTile(int x, int z)
+        public AnthroTile AddTile(int x, int z)
         {
-            List<List<GameObject>> selectedQuad;
+            List<List<AnthroTile>> selectedQuad;
             int i = x;
             int j = z;
 
@@ -145,7 +195,7 @@ namespace HammerFingers.Anthro
 
             while(selectedQuad.Count < i + 1)
             {
-                selectedQuad.Add(new List<GameObject>());
+                selectedQuad.Add(new List<AnthroTile>());
             }
 
             while(selectedQuad[i].Count < j + 1)
@@ -155,12 +205,14 @@ namespace HammerFingers.Anthro
             
             if(selectedQuad[i][j] == null)
             {
-                selectedQuad[i][j] = (GameObject)UnityEngine.Object.Instantiate(Resources.Load("AnthroTile"));
-      
-                generateTerrain(selectedQuad[i][j], GetTile(x, z + 1), GetTile(x, z - 1), GetTile(x - 1, z), GetTile(x + 1, z));
+                selectedQuad[i][j] = new AnthroTile();
+                selectedQuad[i][j].tileObject = (GameObject)UnityEngine.Object.Instantiate(Resources.Load("AnthroTile"));
+                selectedQuad[i][j].biome = SelectBiome(x, z);
 
-                Vector3 newPos = new Vector3(x * tileSize, selectedQuad[i][j].transform.position.y, z * tileSize);
-                selectedQuad[i][j].transform.position = newPos;
+                generateTerrain(selectedQuad[i][j].biome, selectedQuad[i][j], GetTile(x, z + 1), GetTile(x, z - 1), GetTile(x - 1, z), GetTile(x + 1, z));
+
+                Vector3 newPos = new Vector3(x * tileSize, selectedQuad[i][j].tileObject.transform.position.y, z * tileSize);
+                selectedQuad[i][j].tileObject.transform.position = newPos;
 
                 return selectedQuad[i][j];
 
@@ -172,19 +224,75 @@ namespace HammerFingers.Anthro
         }
 
 
-        protected void generateTerrain(GameObject terrain, GameObject northNeighbor = null, GameObject southNeighbor = null, GameObject westNeighbor = null, GameObject eastNeighbor = null)
+        public List<AnthroTile> GetNeighbors(int x, int z)
+        {
+            List<AnthroTile> neighbors = new List<AnthroTile>();
+
+            AnthroTile neighbor = GetTile(x + 1, z);
+            if (neighbor != null)
+                neighbors.Add(neighbor);
+
+            neighbor = GetTile(x - 1, z);
+            if (neighbor != null)
+                neighbors.Add(neighbor);
+
+            neighbor = GetTile(x, z + 1);
+            if (neighbor != null)
+                neighbors.Add(neighbor);
+
+            neighbor = GetTile(x, z - 1);
+            if (neighbor != null)
+                neighbors.Add(neighbor);
+
+            return neighbors;
+
+        }
+
+
+        protected string SelectRandom(List<string> items)
+        {
+            return items[UnityEngine.Random.Range(0, items.Count)];
+        }
+
+        protected Biome SelectBiome(int x, int z)
+        {
+            List<string> selectionList = new List<string>();
+
+            foreach(string biomeKey in biomes.Keys)
+            {
+                for(int i = 0; i < biomes[biomeKey].probability; i++)
+                {
+                    selectionList.Add(biomes[biomeKey].name);
+                }
+            }
+
+            foreach(AnthroTile neighbor in GetNeighbors(x,z))
+            {
+                for(int i = 0; i < 5; i++)
+                    selectionList.Add(neighbor.biome.name);
+            }
+
+            return biomes[SelectRandom(selectionList)];
+            
+        }
+
+
+        protected void generateTerrain(Biome biome, AnthroTile newTile, AnthroTile northNeighbor = null, AnthroTile southNeighbor = null, AnthroTile westNeighbor = null, AnthroTile eastNeighbor = null)
         {
 
-            Mesh northNeighborMesh = (northNeighbor != null) ? northNeighbor.GetComponent<MeshFilter>().mesh : null;
-            Mesh southNeighborMesh = (southNeighbor != null) ? southNeighbor.GetComponent<MeshFilter>().mesh : null;
-            Mesh westNeighborMesh = (westNeighbor != null) ? westNeighbor.GetComponent<MeshFilter>().mesh : null;
-            Mesh eastNeighborMesh = (eastNeighbor != null) ? eastNeighbor.GetComponent<MeshFilter>().mesh : null;
+            Mesh northNeighborMesh = (northNeighbor != null) ? northNeighbor.tileObject.GetComponent<MeshFilter>().mesh : null;
+            Mesh southNeighborMesh = (southNeighbor != null) ? southNeighbor.tileObject.GetComponent<MeshFilter>().mesh : null;
+            Mesh westNeighborMesh = (westNeighbor != null) ? westNeighbor.tileObject.GetComponent<MeshFilter>().mesh : null;
+            Mesh eastNeighborMesh = (eastNeighbor != null) ? eastNeighbor.tileObject.GetComponent<MeshFilter>().mesh : null;
 
-            var draft = AnthroLowPolyTerrainGenerator.TerrainDraft(terrainConfig, northNeighborMesh, southNeighborMesh, westNeighborMesh, eastNeighborMesh);
-            AssignDraftToMeshFilter(draft, terrain);
+
+            var draft = AnthroLowPolyTerrainGenerator.TerrainDraft(biome.config, northNeighborMesh, southNeighborMesh, westNeighborMesh, eastNeighborMesh);
+            AssignDraftToMeshFilter(draft, newTile.tileObject);
 
 
         }
+
+
 
         protected static void AssignDraftToMeshFilter(MeshDraft draft, GameObject terrain)
         {
