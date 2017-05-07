@@ -32,13 +32,20 @@ namespace HammerFingers.Anthro
 
             var plantOtherTree = new GenericAbility("Plant Other Tree", GameObject.FindGameObjectWithTag("Player"), Resources.Load<GameObject>("Tree_001"), 1);
 
+            var summonRain = new GenericAbility("Summon Rain", GameObject.FindGameObjectWithTag("Player"), Resources.Load<GameObject>("RainCloud"), 1);
+
             var extractLimeStone = new GenericAbility("Extract Limestone", GameObject.FindGameObjectWithTag("Player"), Resources.Load<GameObject>("limestone rock 1"), -1);
+
+            var poachTusk = new GenericAbility("Poach Tusks", GameObject.FindGameObjectWithTag("Player"), Resources.Load<GameObject>("lefttusk"), -1);
 
 
             abilities = new List<GenericAbility>();
             abilities.Add(plantTree);
             abilities.Add(plantOtherTree);
+           // abilities.Add(summonRain);
             abilities.Add(extractLimeStone);
+            abilities.Add(poachTusk);
+            
             activeAbility = plantTree;
 
         }
