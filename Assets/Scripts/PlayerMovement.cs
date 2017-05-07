@@ -12,13 +12,12 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         CharacterController controller = GetComponent<CharacterController>();
-        //if (controller.isGrounded)
-        //{
+       
 
-        moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        moveDirection = new Vector3(Input.GetAxis("Horizontal"), -5, Input.GetAxis("Vertical"));
         controller.Move((moveDirection * speed) * Time.deltaTime);
 
-        //}
+        
 
 
 
