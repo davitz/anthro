@@ -28,7 +28,7 @@ GameObject:
   - component: {fileID: 114466004937247880}
   m_Layer: 0
   m_Name: Camera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -124,7 +124,7 @@ MonoBehaviour:
   cameraTransform: {fileID: 224527173049432320}
   target: {fileID: 0}
   distanceMin: 1
-  distanceMax: 100
+  distanceMax: 25
   yOffset: 0
   scrollSensitivity: 1000
   scrollSmoothing: 20
@@ -152,7 +152,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1389185248381570}
   m_LocalRotation: {x: 0.2952486, y: 0.2707576, z: -0.08772904, w: 0.9120429}
-  m_LocalPosition: {x: 0, y: 0, z: 66.96}
+  m_LocalPosition: {x: 0, y: 0, z: -40}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -160,6 +160,6 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 78.27, y: 5.85}
+  m_AnchoredPosition: {x: -26, y: 34}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
