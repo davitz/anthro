@@ -9,6 +9,13 @@ namespace HammerFingers.Anthro
     public class WorldStateManager : MonoBehaviour {
 
         private int worldState; // instance property
+
+        [Header("Background music")]
+        public AudioClip PositiveMusic;
+        public AudioClip NeutralMusic;
+        public AudioClip NegativeMusic;
+
+        
         public int WorldState // public property
         {
             get { return this.worldState; }
@@ -36,14 +43,15 @@ namespace HammerFingers.Anthro
         public Color NeutralColour;
         public Color NegativeColour;
 
+        private AudioSource audio;
+
         void Start()
         {
             worldLight = MainLight.GetComponent<Light>();
-        }
+            audio = this.GetComponent<AudioSource>();
 
-        void Update()
-        {
-            Debug.Log(WorldState);
+            audio.clip = NeutralMusic;
+            audio.Play();
         }
 
         private void WorldStateChanged()
@@ -54,7 +62,6 @@ namespace HammerFingers.Anthro
             if (WorldState > 0 && WorldState <= 100)
             {
                 worldLight.color = Color.Lerp(NeutralColour, PositiveColour, WorldState / 100f);
-                Debug.Log("good light");
             }
             else if (WorldState < 0 && WorldState >= -100)
             {
@@ -65,7 +72,36 @@ namespace HammerFingers.Anthro
                 worldLight.color = NeutralColour;
             }
 
+            PlayMusic();
 
+        }
+
+        void PlayMusic()
+        {
+            if (worldState >= 5)
+            {
+                if (audio.clip != PositiveMusic)
+                {
+                    audio.clip = PositiveMusic;
+                    audio.Play();
+                }
+            }
+            else if (worldState <= -5)
+            {
+                if (audio.clip != NegativeMusic)
+                {
+                    audio.clip = NegativeMusic;
+                    audio.Play();
+                }
+            }
+            else if (worldState >= -4 && worldState <= 4)
+            {
+                if (audio.clip != NeutralMusic)
+                {
+                    audio.clip = NeutralMusic;
+                    audio.Play();
+                }
+            }
         }
 
         void OnGUI()

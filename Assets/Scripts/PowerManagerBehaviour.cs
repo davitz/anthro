@@ -16,7 +16,7 @@ namespace HammerFingers.Anthro
         // Use this for initialization
         void Start()
         {
-            var plantTree = new GenericAbility("Plant Tree", GameObject.FindGameObjectWithTag("Player"), Resources.Load<GameObject>("Tree_002"), 1);
+            var plantTree = new GenericAbility("Plant Tree", GameObject.FindGameObjectWithTag("Player"), Resources.Load<GameObject>("Tree_002"), -1);
 
 
             abilities = new List<GenericAbility>();
