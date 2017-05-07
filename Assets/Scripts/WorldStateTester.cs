@@ -21,7 +21,7 @@ namespace HammerFingers.Anthro
 
         void Update()
         {
-            stateManager.WorldState = WorldState;
+            //stateManager.WorldState = WorldState;
         }
     }
 }

@@ -41,6 +41,11 @@ namespace HammerFingers.Anthro
             worldLight = MainLight.GetComponent<Light>();
         }
 
+        void Update()
+        {
+            Debug.Log(WorldState);
+        }
+
         private void WorldStateChanged()
         {
 
@@ -49,6 +54,7 @@ namespace HammerFingers.Anthro
             if (WorldState > 0 && WorldState <= 100)
             {
                 worldLight.color = Color.Lerp(NeutralColour, PositiveColour, WorldState / 100f);
+                Debug.Log("good light");
             }
             else if (WorldState < 0 && WorldState >= -100)
             {
@@ -58,6 +64,8 @@ namespace HammerFingers.Anthro
             {
                 worldLight.color = NeutralColour;
             }
+
+
         }
 
         void OnGUI()

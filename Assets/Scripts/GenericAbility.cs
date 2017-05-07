@@ -20,6 +20,8 @@ namespace HammerFingers.Anthro
 
         private List<string> CanSpawnOnObjectsWithTag = new List<string>();
 
+        private WorldStateManager worldstate;
+
         #region Constructors
 
         public GenericAbility() { }
@@ -31,6 +33,8 @@ namespace HammerFingers.Anthro
             this.Player = player;
             this.SpawnObj = ObjectToSpawn;
             this.PointValue = pointValue;
+
+            worldstate = GameObject.Find("World State").GetComponent<WorldStateManager>();
         }
 
         #endregion
@@ -40,16 +44,19 @@ namespace HammerFingers.Anthro
         public void Cast()
         {
             SpawnUsingRayCast();
+            worldstate.WorldState += PointValue;
         }
 
         public void CastAt(Vector3 pos)
         {
             SpawnAt(pos);
+            worldstate.WorldState += PointValue;
         }
 
         public void CastAt(float x, float y, float z)
         {
             CastAt(new Vector3(x, y, z));
+            worldstate.WorldState += PointValue;
         }
 
         #endregion
@@ -64,10 +71,8 @@ namespace HammerFingers.Anthro
             RaycastHit hit;
             if (Physics.Raycast(mouseRay, out hit))
             {
-                Debug.Log("hit " + hit.transform.gameObject.name);
                 if (CanSpawnOnObjectsWithTag.Contains(hit.transform.gameObject.tag))
                 {
-                    Debug.Log("in spawn block");
                     return SpawnAt(hit.point);
                 }
             }
