@@ -262,6 +262,10 @@ Prefab:
       propertyPath: m_Center.x
       value: -0.07027373
       objectReference: {fileID: 0}
+    - target: {fileID: 1691434442750676, guid: b1e4f5dd27783ad4b90061ac9e02e011, type: 2}
+      propertyPath: m_Name
+      value: Player
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b1e4f5dd27783ad4b90061ac9e02e011, type: 2}
   m_IsPrefabParent: 0
