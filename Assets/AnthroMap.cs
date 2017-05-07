@@ -47,7 +47,7 @@ namespace HammerFingers.Anthro
         AnthroLowPolyTerrainGenerator.Config terrainConfig = new AnthroLowPolyTerrainGenerator.Config();
 
 
-        public AnthroMap(int _bufferTiles = 20, int _tileSize = 20)
+        public AnthroMap(int _bufferTiles = 5, int _tileSize = 20)
         {
             bufferTiles = _bufferTiles;
             tileSize = _tileSize;
