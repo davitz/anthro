@@ -806,7 +806,7 @@ GameObject:
   - component: {fileID: 114886303090236626}
   - component: {fileID: 114351463607308594}
   m_Layer: 0
-  m_Name: Player
+  m_Name: ThirdPersonController
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
