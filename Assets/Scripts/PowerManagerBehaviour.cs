@@ -24,18 +24,21 @@ namespace HammerFingers.Anthro
         // Use this for initialization
         void Start()
         {
-
+            
             selectedStyle = new GUIStyle();
-            selectedStyle.border.Add(new Rect(-1, -1, 102, 22));
+            selectedStyle.fontStyle = FontStyle.Bold;
 
             var plantTree = new GenericAbility("Plant Tree", GameObject.FindGameObjectWithTag("Player"), Resources.Load<GameObject>("Tree_002"), 1);
 
             var plantOtherTree = new GenericAbility("Plant Other Tree", GameObject.FindGameObjectWithTag("Player"), Resources.Load<GameObject>("Tree_001"), 1);
 
+            var extractLimeStone = new GenericAbility("Extract Limestone", GameObject.FindGameObjectWithTag("Player"), Resources.Load<GameObject>("limestone rock 1"), -1);
+
 
             abilities = new List<GenericAbility>();
             abilities.Add(plantTree);
             abilities.Add(plantOtherTree);
+            abilities.Add(extractLimeStone);
             activeAbility = plantTree;
 
         }
