@@ -54,11 +54,24 @@ namespace ProceduralToolkit.Examples
             }
 
             float scroll = Input.GetAxis("Mouse ScrollWheel");
+            bool rightBumper = Input.GetKey("joystick button 5");
+            bool leftBumper = Input.GetKey("joystick button 4");
+
+            if (rightBumper)
+            {
+                scroll = -0.1f;
+            }
+            else if (leftBumper)
+            {
+                scroll = 0.1f;
+            }
+
             if (scroll != 0)
             {
                 scrollDistance -= scroll*Time.deltaTime*scrollSensitivity;
                 scrollDistance = Mathf.Clamp(scrollDistance, distanceMin, distanceMax);
             }
+            
 
             if (distance != scrollDistance)
             {
@@ -66,10 +79,18 @@ namespace ProceduralToolkit.Examples
             }
 
             cameraTransform.position = CalculateCameraPosition();
+
+            float axisX = Input.GetAxis("Controller Right Joystick X");
+            float axisY = Input.GetAxis("Controller Right Joystick Y");
+
+            if (axisX != 0 || axisY != 0)
+            {
+                RotateCameraWithController(axisX, axisY);
+            }
         }
 
         public void OnDrag(PointerEventData eventData)
-        {
+        { 
             if (cameraTransform == null || target == null) return;
 
             lookAngle += eventData.delta.x*rotationSensitivity;
@@ -81,6 +102,16 @@ namespace ProceduralToolkit.Examples
         private Vector3 CalculateCameraPosition()
         {
             return target.position + cameraTransform.rotation*(Vector3.back*distance) + Vector3.up*yOffset;
+        }
+
+        private void RotateCameraWithController(float axisX, float axisY)
+        {
+            if (cameraTransform == null || target == null) return;
+
+            lookAngle += axisX * rotationSensitivity;
+            tiltAngle -= axisY * rotationSensitivity;
+            tiltAngle = Mathf.Clamp(tiltAngle, tiltMin, tiltMax);
+            rotation = Quaternion.Euler(tiltAngle, lookAngle, 0);
         }
     }
 }
