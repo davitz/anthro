@@ -12,11 +12,23 @@ namespace HammerFingers.Anthro
         public GameObject tileObject { get; set; }
     }
 
+    public class BiomeAffinity
+    {
+        public Biome biome;
+        public int factor;
+    }
+
     public class Biome
     {
+        public Biome()
+        {
+            affinities = new List<BiomeAffinity>();
+        }
         public string name { get; set; }
         public AnthroLowPolyTerrainGenerator.Config config { get; set; }
         public int probability;
+        public int continuityBias;
+        public List<BiomeAffinity> affinities;
     }
 
 
@@ -56,7 +68,8 @@ namespace HammerFingers.Anthro
             var plains = new Biome();
             plains.name = "plains";
             plains.config = plainsConfig;
-            plains.probability = 10;
+            plains.probability = 30;
+            plains.continuityBias = 1;
             biomes.Add("plains", plains);
 
             var hillsConfig = new AnthroLowPolyTerrainGenerator.Config();
@@ -67,7 +80,8 @@ namespace HammerFingers.Anthro
             var hills = new Biome();
             hills.name = "hills";
             hills.config = hillsConfig;
-            hills.probability = 5;
+            hills.probability = 10;
+            hills.continuityBias = 5;
             biomes.Add("hills", hills);
 
 
@@ -76,14 +90,37 @@ namespace HammerFingers.Anthro
             canyonsConfig.gradient.SetKeys(new[] { new GradientColorKey(new Color(.5f, .2f, 0f), 0), new GradientColorKey(new Color(.3f, .2f, 0f), 1) }, new[] { new GradientAlphaKey(1, 0), new GradientAlphaKey(1, 1) });
             canyonsConfig.noiseScale = 50f;
             canyonsConfig.terrainSize.y = 5f;
-            canyonsConfig.heightOffset = -1f;
+            canyonsConfig.heightOffset = -.75f;
             var canyons = new Biome();
             canyons.name = "canyons";
             canyons.config = canyonsConfig;
-            canyons.probability = 1;
+            canyons.probability = 0;
+            canyons.continuityBias = 20;
             biomes.Add("canyons", canyons);
 
+            BiomeAffinity canyonPlainsAffinity = new BiomeAffinity();
+            canyonPlainsAffinity.biome = canyons;
+            canyonPlainsAffinity.factor = 1;
+            plains.affinities.Add(canyonPlainsAffinity);
 
+
+            var rocksConfig = new AnthroLowPolyTerrainGenerator.Config();
+            rocksConfig.gradient = new Gradient();
+            rocksConfig.gradient.SetKeys(new[] { new GradientColorKey(new Color(.5f, .2f, 0f), 0), new GradientColorKey(new Color(.3f, .2f, 0f), 1) }, new[] { new GradientAlphaKey(1, 0), new GradientAlphaKey(1, 1) });
+            rocksConfig.noiseScale = 50f;
+            rocksConfig.terrainSize.y = 5f;
+            rocksConfig.heightOffset = .2f;
+            var rocks = new Biome();
+            rocks.name = "rocks";
+            rocks.config = rocksConfig;
+            rocks.probability = 0;
+            rocks.continuityBias = 20;
+            biomes.Add("rocks", rocks);
+
+            BiomeAffinity rocksHillsAffinity = new BiomeAffinity();
+            rocksHillsAffinity.biome = rocks;
+            rocksHillsAffinity.factor = 4;
+            hills.affinities.Add(rocksHillsAffinity);
 
         }
 
@@ -268,8 +305,15 @@ namespace HammerFingers.Anthro
 
             foreach(AnthroTile neighbor in GetNeighbors(x,z))
             {
-                for(int i = 0; i < 5; i++)
+                for(int i = 0; i < neighbor.biome.continuityBias; i++)
                     selectionList.Add(neighbor.biome.name);
+                foreach(BiomeAffinity affinity in neighbor.biome.affinities)
+                {
+                    for(int i = 0; i < affinity.factor; i++)
+                    {
+                        selectionList.Add(affinity.biome.name);
+                    }
+                }
             }
 
             return biomes[SelectRandom(selectionList)];
